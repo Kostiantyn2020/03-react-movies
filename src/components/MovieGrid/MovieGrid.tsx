@@ -1,17 +1,12 @@
 import styles from "./MovieGrid.module.css";
-
-interface Movie {
-  id: number;
-  title: string;
-  poster_path: string | null;
-}
+import type { Movie } from "../../types/Movie";
 
 interface MovieGridProps {
   movies: Movie[];
   onSelect: (movie: Movie) => void;
 }
 
-function MovieGrid({ movies, onSelect }: MovieGridProps) {
+export default function MovieGrid({ movies, onSelect }: MovieGridProps) {
   if (!movies.length) return null;
 
   return (
@@ -36,5 +31,3 @@ function MovieGrid({ movies, onSelect }: MovieGridProps) {
     </ul>
   );
 }
-
-export default MovieGrid;

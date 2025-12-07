@@ -6,33 +6,36 @@ import MovieGrid from "../MovieGrid/MovieGrid";
 import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MovieModal from "../MovieModal/MovieModal";
+import tmdb from "../../api/tmdb";
+
+import type { Movie } from "../../types/Movie";
+
+import styles from "./App.module.css";
 
 function App() {
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   const fetchMovies = async (query: string) => {
+    setMovies([]);
     setIsLoading(true);
     setError(false);
-    setMovies([]);
 
     try {
-      const res = await fetch(
-        `https://api.themoviedb.org/3/search/movie?api_key=YOUR_KEY&query=${query}`
-      );
+      const { data } = await tmdb.get("/search/movie", {
+        params: { query },
+      });
 
-      if (!res.ok) throw new Error();
-
-      const data = await res.json();
-
-      if (!data.results.length) {
+      if (!data.results || data.results.length === 0) {
         toast.error("No movies found for your request.");
+        return;
       }
 
       setMovies(data.results);
-    } catch {
+    } catch (err) {
+      console.error("TMDB request error:", err);
       setError(true);
     } finally {
       setIsLoading(false);
@@ -40,11 +43,12 @@ function App() {
   };
 
   return (
-    <>
+    <div className={styles.app}>
       <SearchBar onSubmit={fetchMovies} />
 
       {isLoading && <Loader />}
       {error && <ErrorMessage />}
+
       {!isLoading && !error && movies.length > 0 && (
         <MovieGrid
           movies={movies}
@@ -58,7 +62,7 @@ function App() {
           onClose={() => setSelectedMovie(null)}
         />
       )}
-    </>
+    </div>
   );
 }
 

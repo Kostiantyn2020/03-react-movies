@@ -8,7 +8,7 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MovieModal from "../MovieModal/MovieModal";
 import tmdb from "../../api/tmdb";
 
-import type { Movie } from "../../types/Movie";
+import type { Movie } from "../../types/movie";
 
 import styles from "./App.module.css";
 

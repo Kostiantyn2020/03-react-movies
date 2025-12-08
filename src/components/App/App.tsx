@@ -77,7 +77,7 @@ import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MovieModal from "../MovieModal/MovieModal";
 
-import { searchMovies } from "../../services/movieService"; //** */
+import { searchMovies } from "../../services/movieService";
 import type { Movie } from "../../types/movie";
 
 import styles from "./App.module.css";
@@ -89,19 +89,19 @@ function App() {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   const fetchMovies = async (query: string) => {
-    setMovies([]);
+    setMovies([]); //** */
     setIsLoading(true);
     setError(false);
 
     try {
-      const results = await searchMovies(query); //** */
+      const response = await searchMovies(query);
 
-      if (results.length === 0) {
+      if (response.results.length === 0) {
         toast.error("No movies found for your request.");
         return;
       }
 
-      setMovies(results);
+      setMovies(response.results);
     } catch (err) {
       console.error("TMDB request error:", err);
       setError(true);
@@ -118,7 +118,10 @@ function App() {
       {error && <ErrorMessage />}
 
       {!isLoading && !error && movies.length > 0 && (
-        <MovieGrid movies={movies} onSelect={setSelectedMovie} />
+        <MovieGrid
+          movies={movies}
+          onSelect={(movie) => setSelectedMovie(movie)}
+        />
       )}
 
       {selectedMovie && (

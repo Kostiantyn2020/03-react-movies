@@ -36,13 +36,31 @@
 //   return response.data;
 // }
 
-import tmdb from "../api/tmdb";
+// src/services/movieService.ts
+
+import axios from "axios";
 import type { Movie } from "../types/movie";
 
-export async function searchMovies(query: string): Promise<Movie[]> {
-  const { data } = await tmdb.get("/search/movie", {
+export interface SearchMoviesResponse {
+  page: number;
+  results: Movie[];
+  total_pages: number;
+  total_results: number;
+}
+
+const tmdb = axios.create({
+  baseURL: "https://api.themoviedb.org/3",
+  headers: {
+    Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
+  },
+});
+
+export async function searchMovies(
+  query: string
+): Promise<SearchMoviesResponse> {
+  const response = await tmdb.get<SearchMoviesResponse>("/search/movie", {
     params: { query },
   });
 
-  return data.results || [];
+  return response.data;
 }
